@@ -1,0 +1,18 @@
+{
+  "name": "reph_tech_assessment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:api": "npx playwright test tests/api --project=chromium",
+    "test:ui": "npx playwright test tests/ui --project=chromium",
+    "test:ui-all-browser": "npx playwright test tests/ui --project=chromium --project=firefox --project=webkit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6"
+  }
+}
