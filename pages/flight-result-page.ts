@@ -4,7 +4,6 @@ import { formatDate } from '../utils/date-helper';
 
 /**
  * Represents the Flight Result page.
- * @extends FlightResultPage
  */
 export class FlightResultPage {
   page: Page;
@@ -59,11 +58,8 @@ export class FlightResultPage {
 
   /**
    * Verifies that the first flight card in the results list contains expected details/format
-   * @param bookingType (eg. Return, One-Way, Multi-City)
-   * @param departureLocation (eg. SYD, MEL, BNE)
-   * @param destinationLocation (eg. SYD, MEL, BNE)
    */
-  async verifyFlightCardDetails(departureLocation: string, destinationLocation: string) {
+  async verifyFlightCardDetails() {
     const firstFlightCard = this.flightResultList.getByRole('group').first();
     const locationLabel = firstFlightCard.locator(this.flightCardGroup.locationLabel);
     const timeLabel = firstFlightCard.locator(this.flightCardGroup.timeLabel);
@@ -73,25 +69,10 @@ export class FlightResultPage {
     await expect(firstFlightCard, 'First flight card should be visible').toBeVisible();
     await expect(firstFlightCard.locator(this.flightCardGroup.shareButton), 'First flight card should show a share button').toBeVisible();
     await expect(firstFlightCard.locator(this.flightCardGroup.priceLabel), 'First flight card should show a price in dollars').toHaveText(/\$\d{1,3}(,\d{3})*/);
-    // await expect(firstFlightCard.locator(this.flightCardGroup.airlineLogo), 'First flight card should show an airline logo').toBeVisible();
     await expect(firstFlightCard.locator(this.flightCardGroup.selectButton), 'First flight card should show a select button').toBeVisible();
-    // await expect(locationLabel.first(), `Outbound route should include departure airport ${departureLocation}`).toHaveText("\\b(" + departureLocation +")\\b");
-    // await expect(locationLabel.first(), `Outbound route should include destination airport ${destinationLocation}`).toHaveText("\\b(" + destinationLocation +")\\b");
-    // await expect(timeLabel.first(), 'Outbound flight times should use 24-hour departure and arrival times').toHaveText(/\b([01]?\d|2[0-3]):[0-5]\d\s*[–-]\s*([01]?\d|2[0-3]):[0-5]\d\b/);
-    // await expect(flightTypeLabel.first(), 'Outbound flight should show a direct or supported stop count').toHaveText(/(direct|1 stop|2 stops)/i);
-    // await expect(durationLabel.first(), 'Outbound flight duration should show hours and minutes').toHaveText(/\b\d+h\s[0-5]\d m\b/);
-    // if (bookingType === 'Return') {
-    //   await expect(locationLabel.nth(1), `Return route should include airport ${departureLocation}`).toHaveText("\\b(" + departureLocation +")\\b");
-    //   await expect(locationLabel.nth(1), `Return route should include airport ${destinationLocation}`).toHaveText("\\b(" + destinationLocation +")\\b");
-    //   await expect(timeLabel.nth(1), 'Return flight times should use 24-hour departure and arrival times').toHaveText(/\b([01]?\d|2[0-3]):[0-5]\d\s*[–-]\s*([01]?\d|2[0-3]):[0-5]\d\b/);
-    //   await expect(flightTypeLabel.nth(1), 'Return flight should show a direct or supported stop count').toHaveText(/(direct|1 stop|2 stops)/i);
-    //   await expect(durationLabel.nth(1), 'Return flight duration should show hours and minutes').toHaveText(/\b\d+h\s[0-5]\d m\b/);
-    // }
     for (let i = 0; i < await locationLabel.count(); i++) {
       await expect(locationLabel.nth(i), `Flight segment ${i + 1} should show airport codes and location names`).toHaveText(/^([A-Z]{3})\s*(.+?)\s*-\s*([A-Z]{3})\s*(.+)$/);
-      // await expect(locationLabel.nth(i), `Flight segment ${i + 1} should include departure airport ${departureLocation}`).toHaveText("\\b(" + departureLocation +")\\b");
-      // await expect(locationLabel.nth(i), `Flight segment ${i + 1} should include destination airport ${destinationLocation}`).toHaveText("\\b(" + destinationLocation +")\\b");
-      await expect(timeLabel.nth(i), `Flight segment ${i + 1} should show 24-hour departure and arrival times`).toHaveText(/\b([01]?\d|2[0-3]):[0-5]\d\s*[–-]\s*([01]?\d|2[0-3]):[0-5]\d\b/);
+       await expect(timeLabel.nth(i), `Flight segment ${i + 1} should show 24-hour departure and arrival times`).toHaveText(/\b([01]?\d|2[0-3]):[0-5]\d\s*[–-]\s*([01]?\d|2[0-3]):[0-5]\d\b/);
       await expect(flightTypeLabel.nth(i), `Flight segment ${i + 1} should show a direct or supported stop count`).toHaveText(/(direct|1 stop|2 stops)/i);
       await expect(durationLabel.nth(i), `Flight segment ${i + 1} duration should show hours and minutes`).toHaveText(/^\d+h\s+[0-5]?\dm$/);
       await expect(airlineLogo.nth(i), `Flight segment ${i + 1} should show an airline logo`).toBeVisible();

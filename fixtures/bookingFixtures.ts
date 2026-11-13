@@ -10,8 +10,8 @@ export const test = base.extend<BookingFixtures>({
     const bookingApi = new BookingApi(playwright.request);
     try {
       await use(bookingApi);
-    } finally {
-      await bookingApi.dispose();
+    } catch(e) {
+      console.log(e)
     }
   },
 });

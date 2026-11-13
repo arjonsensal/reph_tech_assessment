@@ -4,7 +4,6 @@ import { formatDate } from '../utils/date-helper';
 
 /**
  * Represents the home page.
- * @extends HomePage
  */
 export class HomePage {
   page: Page;
@@ -29,20 +28,20 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.logo = page.getByRole('link', { name: /cheapflights homepage/i });
+    this.logo = page.getByRole('link', { name: 'cheapflights homepage' });
     this.originDivSection = page.locator('div[aria-label="Flight origin input"]');
     this.destinationDivSection = page.locator('div[aria-label="Flight destination input"]');
     this.returnDatePicker = page.locator('div[aria-label="Return date"]');
     this.identicalAirportsError = page.getByText(`Please enter unique 'From' and 'To' airports for flight ''.`);
-    this.loginButton = page.getByRole('button', { name: /Sign in/i });
-    this.signInCreateDialog = page.getByRole('heading', { name: /Welcome to Cheapflights./i });
-    this.tripTypeOptionList = page.getByRole('listbox', { name: 'Trip type Return'});
+    this.loginButton = page.getByRole('button', { name: 'Sign in' });
+    this.signInCreateDialog = page.getByRole('heading', { name: 'Welcome to Cheapflights.' });
+    this.tripTypeOptionList = page.locator('#flight-trip-type-dropdown');
     this.tripTypeCmbbox = page.getByRole('combobox', { name: 'Trip type Return' });
-    this.originCmbbox = page.getByRole('combobox', { name: /Origin location/i });
-    this.destinationCmbbox = page.getByRole('combobox', { name: /Ask anything/i });
+    this.originCmbbox = page.locator('div[aria-label="Flight origin input"] input');
+    this.destinationCmbbox = page.locator('div[aria-label="Flight destination input"] input');
     this.searchButton = this.destinationDivSection.getByRole('button', { name: 'Search' });
     this.departureReturnDateButton = page.locator('div.BdbJ div:not([aria-label="Trip type"])').first();
-    this.travelTypeAmountButton = page.locator('div.BdbJ').filter({ hasText: /Trip type/i });
+    this.travelTypeAmountButton = page.locator('div.BdbJ').filter({ hasText: 'Trip type' });
     this.calendarModal = page.locator('div.sGVi');
     this.prevMonthBtn = this.calendarModal.getByRole('button', { name: 'Previous month' });
     this.nextMonthBtn = this.calendarModal.getByRole('button', { name: 'Next month' });
@@ -96,10 +95,15 @@ export class HomePage {
    * @param origin location abbreviation (e.g. LAX, JFK, SFO)
    */
   async selectOriginLocation(origin: string) {
-    await this.originCmbbox.click();
-    await this.originCmbbox.fill(origin);
-    await expect(this.page.locator('#flight-origin-smarty-input-list')).toBeVisible();
-    await this.page.keyboard.press('Enter');
+    const originCmbbox = await this.originCmbbox;
+    await originCmbbox.click();
+    await originCmbbox.pressSequentially(origin);
+    await expect(originCmbbox).toHaveValue(origin);
+
+    await originCmbbox.click();
+    const optionLocator = await this.page.locator('#flight-origin-smarty-input-list');
+    await expect(optionLocator).toBeVisible();
+    await optionLocator.locator('li').first().click();
   }
 
   /**
@@ -107,10 +111,15 @@ export class HomePage {
    * @param destination location abbreviation (e.g. LAX, JFK, SFO)
    */
   async selectDestinationLocation(destination: string) {
-    await this.destinationCmbbox.click();
-    await this.destinationCmbbox.fill(destination);
-    await expect(this.page.locator('ul[aria-label="Destination airports"]')).toBeVisible();
-    await this.page.keyboard.press('Enter');
+    const destinationCmbbox = await this.destinationCmbbox;
+    await destinationCmbbox.click();
+    await destinationCmbbox.pressSequentially(destination);
+    await expect(destinationCmbbox).toHaveValue(destination);
+
+    await destinationCmbbox.click();
+    const optionLocator = await this.page.locator('[id*="flight-smarty-option"]').first();
+    await expect(optionLocator).toBeVisible();
+    await optionLocator.click();
   }
 
   /**
@@ -209,7 +218,8 @@ export class HomePage {
   async verifyErrorMessageForIdenticalAirportInputs() {
     await this.clickSearchButton();
     await this.destinationCmbbox.click();
-    await this.destinationCmbbox.pressSequentially('ABC');
+    await this.destinationCmbbox.pressSequentially('A');
+    await this.page.waitForTimeout(5000);
     await expect(this.identicalAirportsError, 'Search should show an error for identical origin and destination airports').toBeVisible();
   }
 }

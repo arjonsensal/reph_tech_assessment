@@ -26,7 +26,7 @@ test.describe('Flight Search Result Validation', { tag: "@test2" }, () => {
 
     test('Validate Individual flight card fields', async ({ flightResultPage }) => {
       await flightResultPage.verifyFlightResultsVisible();
-      await flightResultPage.verifyFlightCardDetails(departureLocation, destinationLocation);
+      await flightResultPage.verifyFlightCardDetails();
     });
 
     test('Validate Chepest price sorting', async ({ flightResultPage }) => {
@@ -44,11 +44,8 @@ test.describe('Flight Search Result Validation', { tag: "@test2" }, () => {
       futureDeparture.setUTCDate(futureDeparture.getUTCDate() - 2);
       const negativeDepartureDate = futureDeparture.toLocaleDateString('en-US', { timeZone: 'UTC' });
 
-      await page.goto('/');
-      await homePage.clearDepartureLocations();
-      await homePage.selectOriginLocation(departureLocation);
-      await homePage.clearDestinationLocations();
-      await homePage.selectDestinationLocation(destinationLocation);
+      await homePage.selectOriginLocation(destinationLocation);
+      await homePage.selectDestinationLocation(departureLocation);
       await homePage.selectTripType('One-way');
       await homePage.selectDepartureDate(negativeDepartureDate);
       await homePage.uncheckCompareCheapFlightsCheckbox();

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:api": "npx playwright test tests/api --project=chromium",
-    "test:ui": "npx playwright test tests/ui --project=chromium",
+    "test:ui": "npx playwright test tests/ui --project=chromium --trace on",
     "test:ui-all-browser": "npx playwright test tests/ui --project=chromium --project=firefox --project=webkit"
   },
   "keywords": [],
